@@ -1,0 +1,108 @@
+/* bus-tracker.css */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --border: #2a2d3d;
+  --accent: #4f8ef7;
+  --text: #e2e8f0;
+  --text-muted: #8892a4;
+  --danger: #e05c5c;
+  --success: #4caf86;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+body { background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* Navbar */
+.navbar {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem 2rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.navbar a { color: var(--text); text-decoration: none; font-weight: 600; }
+.navbar a:hover { color: var(--accent); }
+
+main { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+
+/* Hero */
+.hero { text-align: center; padding: 3rem 0 2rem; }
+.hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.hero p { color: var(--text-muted); }
+
+/* Search */
+.stop-search { max-width: 600px; margin: 2rem auto; }
+.search-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 1rem;
+  outline: none;
+}
+.search-input:focus { border-color: var(--accent); }
+
+.search-results {
+  list-style: none;
+  margin-top: 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.search-results li a {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: var(--text);
+  text-decoration: none;
+}
+.search-results li a:hover { background: var(--border); }
+
+/* Departure board */
+.departure-board { margin-top: 2rem; }
+.departure-board h3 { margin-bottom: 1rem; font-size: 1.2rem; }
+
+.departures {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.departures th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+.departures td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+.departures tr:last-child td { border-bottom: none; }
+.departures tr:hover td { background: var(--border); }
+
+.route-badge {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 1rem;
+}
+.delay { color: var(--danger); font-weight: 600; }
+
+/* Map page */
+.map-page h2 { margin-bottom: 0.5rem; }
+.map-note { color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem; }
+#live-map { border-radius: 10px; border: 1px solid var(--border); }
+
+/* Bus icon on map */
+.bus-icon { font-size: 20px; line-height: 1; }
+
+/* Utilities */
+.loading { color: var(--text-muted); padding: 1rem 0; }
+.error { color: var(--danger); padding: 1rem 0; }
+.empty { color: var(--text-muted); padding: 1rem 0; }
