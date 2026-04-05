@@ -3,14 +3,17 @@ mod state;
 mod ws;
 
 use anyhow::Result;
-use axum::Router;
+use axum::{routing::{get, post}, Router};
 use db::models::VehiclePosition;
 use dotenvy::dotenv;
+use leptos::{config::get_configuration, view};
+use leptos_axum::{generate_route_list, handle_server_fns, render_route};
 use state::AppState;
 use tokio::sync::broadcast;
 use tower_http::cors::CorsLayer;
 use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use app::App;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -41,16 +44,23 @@ async fn main() -> Result<()> {
     realtime::start_poller(redis_client.clone(), positions_tx.clone()).await;
     info!("GTFS-RT poller started");
 
+    let conf = get_configuration(Some("Cargo.toml"))?;
+    let leptos_options = conf.leptos_options;
+
     let state = AppState {
         db: pool,
         redis: redis_client,
+        leptos_options,
         positions_tx,
     };
 
+    let routes = generate_route_list(|| view! { <App/> });
+
     let app = Router::new()
-        // TODO: add REST routes  (routes::router())
-        // TODO: add WebSocket route (ws::handler)
-        // TODO: add Leptos SSR routes
+        .route("/hello", get(|| async { "ok" }))
+        .route("/api/*fn_name", post(handle_server_fns))
+        .route("/", get(render_route::<AppState, _>(routes.clone(), || view! { <App/> })))
+        .route("/*path", get(render_route::<AppState, _>(routes, || view! { <App/> })))
         .layer(CorsLayer::permissive())
         .with_state(state);
 

@@ -149,7 +149,7 @@ pub async fn ingest_feed(pool: &PgPool, feed_url: &str) -> Result<()> {
                 Ok(row) => {
                     sqlx::query!(
                         r#"
-                        INSERT INTO stops (id, stop_id, name, lat, lon, code, desc, zone_id, url, location_type, parent_station)
+                        INSERT INTO stops (id, stop_id, name, lat, lon, code, "desc", zone_id, url, location_type, parent_station)
                         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
                         ON CONFLICT (stop_id) DO UPDATE
                           SET name = EXCLUDED.name, lat = EXCLUDED.lat, lon = EXCLUDED.lon
@@ -183,7 +183,7 @@ pub async fn ingest_feed(pool: &PgPool, feed_url: &str) -> Result<()> {
                 Ok(row) => {
                     sqlx::query!(
                         r#"
-                        INSERT INTO routes (id, route_id, agency_id, short_name, long_name, route_type, color, text_color, desc, url)
+                        INSERT INTO routes (id, route_id, agency_id, short_name, long_name, route_type, color, text_color, "desc", url)
                         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
                         ON CONFLICT (route_id) DO UPDATE
                           SET short_name = EXCLUDED.short_name, long_name = EXCLUDED.long_name

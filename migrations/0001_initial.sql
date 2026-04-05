@@ -20,16 +20,16 @@ CREATE TABLE IF NOT EXISTS stops (
     lat             DOUBLE PRECISION NOT NULL,
     lon             DOUBLE PRECISION NOT NULL,
     code            TEXT,
-    desc            TEXT,
+    "desc"            TEXT,
     zone_id         TEXT,
     url             TEXT,
     location_type   INTEGER,
     parent_station  TEXT
 );
 
--- Spatial index for nearest-stop queries
-CREATE INDEX IF NOT EXISTS stops_geo_idx
-    ON stops USING GIST (ST_MakePoint(lon, lat)::geography);
+
+CREATE INDEX IF NOT EXISTS stops_lat_idx ON stops(lat);
+CREATE INDEX IF NOT EXISTS stops_lon_idx ON stops(lon);
 
 -- Routes (bus lines)
 CREATE TABLE IF NOT EXISTS routes (
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS routes (
     route_type  INTEGER NOT NULL,
     color       TEXT,
     text_color  TEXT,
-    desc        TEXT,
+    "desc"        TEXT,
     url         TEXT
 );
 

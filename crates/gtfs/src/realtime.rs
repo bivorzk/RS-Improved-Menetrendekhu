@@ -1,5 +1,6 @@
 use anyhow::Result;
 use prost::Message;
+use reqwest::Url;
 use tracing::{info, warn};
 
 use crate::gtfs_rt::FeedMessage;
@@ -20,13 +21,46 @@ pub mod bkk {
 pub async fn fetch_vehicle_positions(feed_url: &str) -> Result<Vec<VehiclePosition>> {
     info!("Fetching GTFS-RT vehicle positions from {}", feed_url);
 
-    let bytes = reqwest::get(feed_url)
-        .await?
-        .bytes()
-        .await?;
+    let client = reqwest::Client::new();
+    let request = if let Ok(api_key) = std::env::var("BUS_API_KEY") {
+        info!("Using BUS_API_KEY from .env for GTFS-RT request");
+        let mut url = Url::parse(feed_url)?;
+        url.query_pairs_mut().append_pair("key", &api_key);
+        client.get(url)
+    } else {
+        client.get(feed_url)
+    };
+
+    let response = request.send().await?;
+    let status = response.status();
+    let content_type = response
+        .headers()
+        .get(reqwest::header::CONTENT_TYPE)
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("<missing>")
+        .to_string();
+
+    let bytes = response.bytes().await?;
+    if !status.is_success() {
+        let body_preview = String::from_utf8_lossy(&bytes)
+            .chars()
+            .take(200)
+            .collect::<String>();
+        return Err(anyhow::anyhow!(
+            "GTFS-RT request failed: {} (content-type={}) body={}",
+            status,
+            content_type,
+            body_preview
+        ));
+    }
 
     let feed = FeedMessage::decode(bytes).map_err(|e| {
-        anyhow::anyhow!("Failed to decode GTFS-RT protobuf: {}", e)
+        anyhow::anyhow!(
+            "Failed to decode GTFS-RT protobuf: {} (status={} content-type={})",
+            e,
+            status,
+            content_type
+        )
     })?;
 
     let mut positions = Vec::new();

@@ -38,7 +38,7 @@ async fn poll_and_broadcast(
     // Cache in Redis as JSON (TTL slightly longer than poll interval)
     let mut conn = redis_client.get_multiplexed_async_connection().await?;
     let json = serde_json::to_string(&positions)?;
-    conn.set_ex(REDIS_POSITIONS_KEY, json, POLL_INTERVAL_SECS * 2).await?;
+    conn.set_ex::<_, _, ()>(REDIS_POSITIONS_KEY, json, POLL_INTERVAL_SECS * 2).await?;
 
     let count = positions.len();
 

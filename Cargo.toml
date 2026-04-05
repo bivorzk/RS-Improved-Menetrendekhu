@@ -52,3 +52,12 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 anyhow = "1"
 thiserror = "2"
 dotenvy = "0.15"
+
+[[workspace.metadata.leptos]]
+output-name = "bus-tracker"
+site-root = "target/site"
+site-pkg-dir = "pkg"
+site-addr = "0.0.0.0:3000"
+reload-port = "3001"
+reload-external-port = "3001"
+env = "DEV"

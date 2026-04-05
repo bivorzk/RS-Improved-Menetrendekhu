@@ -1,7 +1,7 @@
 use anyhow::Result;
 use sqlx::PgPool;
 
-use crate::models::{Route, Stop, StopTime, Trip};
+use crate::models::{Route, Stop, StopTime};
 
 // --- Stops ---
 
@@ -15,7 +15,7 @@ pub async fn get_stops_near(
     let stops = sqlx::query_as!(
         Stop,
         r#"
-        SELECT id, stop_id, name, lat, lon, code, desc, zone_id, url, location_type, parent_station
+        SELECT id, stop_id, name, lat, lon, code, "desc" AS desc, zone_id, url, location_type, parent_station
         FROM stops
         WHERE ST_DWithin(
             ST_MakePoint(lon, lat)::geography,
@@ -42,7 +42,7 @@ pub async fn get_stop_by_id(pool: &PgPool, stop_id: &str) -> Result<Option<Stop>
     let stop = sqlx::query_as!(
         Stop,
         r#"
-        SELECT id, stop_id, name, lat, lon, code, desc, zone_id, url, location_type, parent_station
+        SELECT id, stop_id, name, lat, lon, code, "desc" AS desc, zone_id, url, location_type, parent_station
         FROM stops WHERE stop_id = $1
         "#,
         stop_id
@@ -57,7 +57,7 @@ pub async fn search_stops(pool: &PgPool, query: &str) -> Result<Vec<Stop>> {
     let stops = sqlx::query_as!(
         Stop,
         r#"
-        SELECT id, stop_id, name, lat, lon, code, desc, zone_id, url, location_type, parent_station
+        SELECT id, stop_id, name, lat, lon, code, "desc" AS desc, zone_id, url, location_type, parent_station
         FROM stops
         WHERE name ILIKE $1
         ORDER BY name
@@ -78,7 +78,7 @@ pub async fn get_routes_for_stop(pool: &PgPool, stop_id: &str) -> Result<Vec<Rou
         Route,
         r#"
         SELECT DISTINCT r.id, r.route_id, r.agency_id, r.short_name, r.long_name,
-               r.route_type, r.color, r.text_color, r.desc, r.url
+               r.route_type, r.color, r.text_color, r."desc" AS desc, r.url
         FROM routes r
         JOIN trips t ON t.route_id = r.route_id
         JOIN stop_times st ON st.trip_id = t.trip_id
