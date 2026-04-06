@@ -36,26 +36,31 @@ pub fn StopSearch() -> impl IntoView {
     };
 
     view! {
-        <div class="stop-search">
-            <input
-                type="text"
-                placeholder="Megálló neve (pl. Győr, autóbusz-állomás)"
-                prop:value=query
-                on:input=on_input
-                class="search-input"
-            />
-            {move || loading.get().then(|| view! { <p class="loading">"Keresés..."</p> })}
-            <ul class="search-results">
+        <div class="space-y-4 rounded-[28px] border border-slate-200/80 bg-white/95 p-5 shadow-soft">
+            <label class="block text-sm font-medium text-slate-700">
+                "Keress megállót"
+                <input
+                    type="text"
+                    placeholder="Megálló neve (pl. Győr, autóbusz-állomás)"
+                    prop:value=query
+                    on:input=on_input
+                    class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
+                />
+            </label>
+
+            {move || loading.get().then(|| view! { <p class="text-sm text-slate-500">"Keresés..."</p> })}
+
+            <ul class="space-y-2">
                 {move || results.get().into_iter().map(|stop| {
                     let stop_id = stop.stop_id.clone();
                     view! {
                         <li>
-                            <a href=format!("/stop/{}", stop_id)>
+                            <a href=format!("/stop/{}", stop_id) class="block rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 transition hover:border-sky-300 hover:bg-sky-50">
                                 {stop.name.clone()}
                             </a>
                         </li>
                     }
-                }).collect::<Vec<_>>()}
+                }).collect::<Vec<_>>() }
             </ul>
         </div>
     }

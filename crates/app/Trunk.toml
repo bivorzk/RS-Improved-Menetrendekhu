@@ -1,0 +1,7 @@
+[build]
+release = false
+public_url = "/"
+
+[serve]
+port = 8081
+

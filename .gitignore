@@ -1,3 +1,5 @@
 /target
 .env
 *.pb
+dist
+package-lock.json
